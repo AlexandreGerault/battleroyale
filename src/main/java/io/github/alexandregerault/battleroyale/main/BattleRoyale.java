@@ -8,9 +8,13 @@ import org.spongepowered.api.Game;
 import org.spongepowered.api.asset.Asset;
 import org.spongepowered.api.asset.AssetManager;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.data.DataRegistration;
+import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.GameRegistryEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 
@@ -18,9 +22,14 @@ import com.flowpowered.math.vector.Vector3i;
 // Imports for logger
 import com.google.inject.Inject;
 
+import io.github.alexandregerault.battleroyale.data.ClipboardData;
+import io.github.alexandregerault.battleroyale.data.ClipboardKeys;
+import io.github.alexandregerault.battleroyale.data.FighterData;
+import io.github.alexandregerault.battleroyale.data.FighterKeys;
+import io.github.alexandregerault.battleroyale.data.PlayerData;
 import io.github.alexandregerault.battleroyale.data.PlayerKeys;
-import io.github.alexandregerault.battleroyale.registrers.CommandsRegister;
-import io.github.alexandregerault.battleroyale.registrers.EventsRegister;
+import io.github.alexandregerault.battleroyale.registers.CommandsRegister;
+import io.github.alexandregerault.battleroyale.registers.EventsRegister;
 
 import java.io.File;
 import java.util.Collection;
@@ -37,7 +46,7 @@ public class BattleRoyale {
 	@Inject
 	private AssetManager assets;
 	@Inject
-	private PluginContainer plugin;
+	private PluginContainer container;
 	@Inject
     private Logger logger;
     @Inject
@@ -47,8 +56,45 @@ public class BattleRoyale {
     private File schematicsDir;
     private Vector3i spawn;
     private GameState state;
+    
+    @Listener
+	public void GameRegistryEventRegisterKey(GameRegistryEvent.Register<Key<?>> event) {
+	    event.register(ClipboardKeys.CLIPBOARD);
+	    event.register(ClipboardKeys.CORNER_ONE);
+	    event.register(ClipboardKeys.CORNER_TWO);
+	    
+	    event.register(PlayerKeys.ROLE);
+	    
+	    event.register(FighterKeys.KILLS);
+	}
 	
-
+    @Listener
+    public void onPreInit(GamePreInitializationEvent e) {
+    	DataRegistration.builder()
+    	.dataClass(ClipboardData.class)
+    	.immutableClass(ClipboardData.Immutable.class)
+    	.builder(new ClipboardData.Builder())
+    	.manipulatorId("clipboard")
+    	.dataName("Clipboard Data")
+    	.buildAndRegister(container);
+    	
+    	DataRegistration.builder()
+    	.dataClass(PlayerData.class)
+    	.immutableClass(PlayerData.Immutable.class)
+    	.builder(new PlayerData.Builder())
+    	.manipulatorId("player")
+    	.dataName("Player Data")
+    	.buildAndRegister(container);
+    	
+    	DataRegistration.builder()
+    	.dataClass(FighterData.class)
+    	.immutableClass(FighterData.Immutable.class)
+    	.builder(new FighterData.Builder())
+    	.manipulatorId("fighter")
+    	.dataName("Fighter Data")
+    	.buildAndRegister(container);
+    }
+    
 	@Listener
 	public void onInit(GameInitializationEvent e){
 		CommandsRegister.register(this);
@@ -66,13 +112,6 @@ public class BattleRoyale {
     
     @Listener
     public void onServerStop(GameStoppingServerEvent event) {
-    	game.getServer().getWorlds().forEach(world -> {
-    		world.getPlayers().forEach(player -> {
-    			player.kick();
-    		});
-    		game.getServer().unloadWorld(world);
-    		game.getServer().deleteWorld(game.getServer().getWorldProperties(world.getName()).get());
-    	});
     }
     
     public Game game() {
@@ -84,7 +123,7 @@ public class BattleRoyale {
     }
     
     public PluginContainer plugin() {
-    	return this.plugin;
+    	return this.container;
     }
     
     public File configDir() {

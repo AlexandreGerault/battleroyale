@@ -9,6 +9,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import io.github.alexandregerault.battleroyale.data.PlayerData;
 import io.github.alexandregerault.battleroyale.data.PlayerKeys;
 import io.github.alexandregerault.battleroyale.main.PlayerRoles;
 
@@ -20,6 +21,8 @@ public class SetRoleCommand implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		String roleName = args.<String>getOne("role").get();
 		Player p = args.<Player>getOne("player name").get();
+
+		p.offer(p.getOrCreate(PlayerData.class).get());
 		
 		switch (roleName.toLowerCase()) {
 			case "fighter":
@@ -36,8 +39,7 @@ public class SetRoleCommand implements CommandExecutor {
 				return CommandResult.success();
 		}
 		
-		p.sendMessage(Text.of(TextColors.GREEN, p.getName(), "'s role is now: ", p.get(PlayerKeys.ROLE)));
-		
+		p.sendMessage(Text.of(TextColors.GREEN, p.getName(), "'s role is now: ", p.get(PlayerKeys.ROLE).get().name()));
 		
 		return CommandResult.success();
 	}

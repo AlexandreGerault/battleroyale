@@ -141,7 +141,7 @@ public class PlayerData extends AbstractData<PlayerData, PlayerData.Immutable> {
     @Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-08-22T18:12:53.081Z")
     public static class Builder extends AbstractDataBuilder<PlayerData> implements DataManipulatorBuilder<PlayerData, Immutable> {
 
-        protected Builder() {
+        public Builder() {
             super(PlayerData.class, 1);
         }
 

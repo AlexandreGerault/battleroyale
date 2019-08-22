@@ -12,6 +12,8 @@ import org.spongepowered.api.world.extent.ArchetypeVolume;
 public class ClipboardKeys {
 
     private ClipboardKeys() {}
+    
+    static void dummy() {}
 
     public final static Key<OptionalValue<Vector3i>> CORNER_ONE;
     public final static Key<OptionalValue<Vector3i>> CORNER_TWO;

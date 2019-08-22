@@ -209,7 +209,7 @@ public class ClipboardData extends AbstractData<ClipboardData, ClipboardData.Imm
     @Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-08-22T18:21:11.354Z")
     public static class Builder extends AbstractDataBuilder<ClipboardData> implements DataManipulatorBuilder<ClipboardData, Immutable> {
 
-        protected Builder() {
+        public Builder() {
             super(ClipboardData.class, 1);
         }
 

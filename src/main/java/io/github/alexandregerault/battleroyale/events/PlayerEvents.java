@@ -14,7 +14,9 @@ import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import io.github.alexandregerault.battleroyale.data.ClipboardData;
 import io.github.alexandregerault.battleroyale.data.FighterKeys;
+import io.github.alexandregerault.battleroyale.data.PlayerData;
 import io.github.alexandregerault.battleroyale.data.PlayerKeys;
 import io.github.alexandregerault.battleroyale.main.BattleRoyale;
 import io.github.alexandregerault.battleroyale.main.GameStates;
@@ -37,11 +39,14 @@ public class PlayerEvents {
 
 	@Listener
 	public void onPlayerConnect(ClientConnectionEvent.Join event) {
+		
 		if (!plugin.state().equals(GameStates.LOBBY)) {
 			Player player = event.getTargetEntity();
 			player.kick(Text.of(TextColors.RED, "A game is already in progress, sorry"));
 		} else {
 			Player player = (Player) event.getSource();
+			player.offer(player.getOrCreate(ClipboardData.class).get());
+			player.offer(player.getOrCreate(PlayerData.class).get());
 			player.offer(PlayerKeys.ROLE, PlayerRoles.FIGHTER);
 		}
 	}

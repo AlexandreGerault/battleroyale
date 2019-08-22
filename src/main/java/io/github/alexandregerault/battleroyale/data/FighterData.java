@@ -140,7 +140,7 @@ public class FighterData extends AbstractData<FighterData, FighterData.Immutable
     @Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-08-22T18:12:38.244Z")
     public static class Builder extends AbstractDataBuilder<FighterData> implements DataManipulatorBuilder<FighterData, Immutable> {
 
-        protected Builder() {
+        public Builder() {
             super(FighterData.class, 1);
         }
 
