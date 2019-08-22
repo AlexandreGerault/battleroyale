@@ -23,7 +23,7 @@ public class CommandsRegister {
 		CommandSpec getRoleCommand = CommandSpec.builder()
 				.description(Text.of("Give your current role"))
 				.permission("brp.command.role.get")
-				.executor(new GetRoleCommand(plugin))
+				.executor(new GetRoleCommand())
 				.build();
 		
 		CommandSpec setRoleCommand = CommandSpec.builder()
@@ -32,7 +32,7 @@ public class CommandsRegister {
 				.arguments(
 						GenericArguments.onlyOne(GenericArguments.player(Text.of("player name"))),
 						GenericArguments.onlyOne(GenericArguments.string(Text.of("role"))))
-				.executor(new SetRoleCommand(plugin))
+				.executor(new SetRoleCommand())
 				.build();
 		
 		CommandSpec makeSpawnCommand = CommandSpec.builder()
@@ -44,7 +44,7 @@ public class CommandsRegister {
 		CommandSpec copySelectionCommand = CommandSpec.builder()
 				.description(Text.of("Command copying the selected period to the clipboard"))
 				.permission("brp.command.copy")
-				.executor(new CopySelectionCommand(plugin))
+				.executor(new CopySelectionCommand())
 				.build();
 
 		CommandSpec saveStructureCommand = CommandSpec.builder()

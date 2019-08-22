@@ -1,5 +1,7 @@
 package io.github.alexandregerault.battleroyale.commands.structure;
 
+import java.util.Optional;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -12,8 +14,8 @@ import org.spongepowered.api.world.extent.ArchetypeVolume;
 
 import com.flowpowered.math.vector.Vector3i;
 
+import io.github.alexandregerault.battleroyale.data.ClipboardKeys;
 import io.github.alexandregerault.battleroyale.main.BattleRoyale;
-import io.github.alexandregerault.battleroyale.main.PlayerData;
 import io.github.alexandregerault.battleroyale.utils.SchematicFile;
 
 public class SaveStructureCommand implements CommandExecutor {
@@ -33,16 +35,18 @@ public class SaveStructureCommand implements CommandExecutor {
 		}
 		
 		Player player = (Player) source;
-		PlayerData playerData = plugin.getPlayerData(player);
 		String name = args.<String>getOne("structure name").get();
 		
-		if (playerData.getPos1() == null || playerData.getPos2() == null) {
+		Optional<Vector3i> pos1 = player.get(ClipboardKeys.CORNER_ONE).get();
+		Optional<Vector3i> pos2 = player.get(ClipboardKeys.CORNER_TWO).get();
+		
+		if (!pos1.isPresent() || !pos2.isPresent()) {
 			player.sendMessage(Text.of(TextColors.RED, "Error, you must have selected two corners with golden hoe"));
 			return CommandResult.success();
 		}
 		
-		Vector3i min = playerData.getPos1().min(playerData.getPos2());
-        Vector3i max = playerData.getPos1().max(playerData.getPos2());
+		Vector3i min = pos1.get().min(pos2.get());
+        Vector3i max = pos1.get().max(pos2.get());
         Vector3i origin = new Vector3i((min.getX() + max.getX())/2, min(min.getY(), max.getY()), (min.getZ() + max.getZ())/2);
 
         ArchetypeVolume volume = player.getWorld().createArchetypeVolume(min, max, origin);

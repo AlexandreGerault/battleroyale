@@ -1,5 +1,7 @@
 package io.github.alexandregerault.battleroyale.commands;
 
+import java.util.Optional;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -11,16 +13,12 @@ import org.spongepowered.api.text.format.TextColors;
 
 import com.flowpowered.math.vector.Vector3i;
 
-import io.github.alexandregerault.battleroyale.main.BattleRoyale;
-import io.github.alexandregerault.battleroyale.main.PlayerData;
+import io.github.alexandregerault.battleroyale.data.ClipboardKeys;
 
 public class CopySelectionCommand implements CommandExecutor {
 
-	private BattleRoyale plugin;
 	
-	public CopySelectionCommand (BattleRoyale plugin_) {
-		this.plugin = plugin_;
-	}
+	public CopySelectionCommand () {}
 	
 	@Override
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
@@ -28,23 +26,28 @@ public class CopySelectionCommand implements CommandExecutor {
 			src.sendMessage(Text.of(TextColors.RED, "Player command only"));
 			return CommandResult.success();
 		}
-		Player pl = (Player) src;
+		Player player = (Player) src;
 		
-		PlayerData data = plugin.getPlayerData(pl);
+		Optional<Vector3i> optPositionOne = player.get(ClipboardKeys.CORNER_ONE).get();
+		Optional<Vector3i> optPositionTwo = player.get(ClipboardKeys.CORNER_TWO).get();
 		
-		if (data.getPos1() == null || data.getPos2() == null) {
-			pl.sendMessage(Text.of(TextColors.RED, "Error, you must have selected two corners with golden hoe"));
+		if (!optPositionOne.isPresent() || !optPositionTwo.isPresent()) {
+			player.sendMessage(Text.of(TextColors.RED, "Error, you must have selected two corners with golden hoe"));
 			return CommandResult.success();
 		}
 		
+		Vector3i positionOne = optPositionOne.get();
+		Vector3i positionTwo = optPositionTwo.get();
+		
 		Vector3i origin = new Vector3i(
-				( data.getPos1().getX() + data.getPos2().getX() )/2,
-				  data.getPos1().min(data.getPos2()).getY(),
-				( data.getPos1().getZ() + data.getPos2().getZ() )/2
+				( positionOne.getX() + positionTwo.getX() )/2,
+				  positionOne.min(positionTwo).getY(),
+				( positionOne.getZ() + positionTwo.getZ() )/2
 		);
 		
-		data.setClipboard(pl.getWorld().createArchetypeVolume(data.getPos1().min(data.getPos2()), data.getPos1().max(data.getPos2()), origin));
-		pl.sendMessage(Text.of(TextColors.LIGHT_PURPLE, "Copying from " + data.getPos1().toString() + " to " + data.getPos2().toString() +"! Clipboard updated."));
+		player.offer(ClipboardKeys.CLIPBOARD, Optional.of(player.getWorld().createArchetypeVolume(positionOne.min(positionTwo), positionOne.max(positionTwo), origin)));
+		
+		player.sendMessage(Text.of(TextColors.LIGHT_PURPLE, "Copying from " + positionOne.toString() + " to " + positionTwo.toString() +"! Clipboard updated."));
 		
 		return CommandResult.success();
 	}

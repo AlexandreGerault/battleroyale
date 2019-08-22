@@ -1,10 +1,10 @@
 package io.github.alexandregerault.battleroyale.main;
 
-public class PlayerMode {
+public class PlayerRole {
 
 	private String name;
 	
-	public PlayerMode(String name) {
+	public PlayerRole(String name) {
 		this.name = name;
 	}
 	

@@ -14,11 +14,12 @@ import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import io.github.alexandregerault.battleroyale.data.FighterKeys;
+import io.github.alexandregerault.battleroyale.data.PlayerKeys;
 import io.github.alexandregerault.battleroyale.main.BattleRoyale;
 import io.github.alexandregerault.battleroyale.main.GameStates;
-import io.github.alexandregerault.battleroyale.main.PlayerData;
-import io.github.alexandregerault.battleroyale.main.PlayerModes;
-import io.github.alexandregerault.tasks.EndCountdownTask;
+import io.github.alexandregerault.battleroyale.main.PlayerRoles;
+import io.github.alexandregerault.battleroyale.tasks.EndCountdownTask;
 
 public class PlayerEvents {
 	private final BattleRoyale plugin;
@@ -37,13 +38,11 @@ public class PlayerEvents {
 	@Listener
 	public void onPlayerConnect(ClientConnectionEvent.Join event) {
 		if (!plugin.state().equals(GameStates.LOBBY)) {
-			Player pl = event.getTargetEntity();
-			pl.kick(Text.of(TextColors.RED, "A game is already in progress, sorry"));
+			Player player = event.getTargetEntity();
+			player.kick(Text.of(TextColors.RED, "A game is already in progress, sorry"));
 		} else {
-			Player pl = (Player) event.getSource();
-			PlayerData data = plugin.getPlayerData(pl);
-
-			data.setRole(PlayerModes.FIGHTER);
+			Player player = (Player) event.getSource();
+			player.offer(PlayerKeys.ROLE, PlayerRoles.FIGHTER);
 		}
 	}
 
@@ -55,9 +54,8 @@ public class PlayerEvents {
 			// Is the died entity a player?
 			if (event.getTargetEntity() instanceof Player) {
 				Player killed = (Player) event.getTargetEntity();
-				PlayerData killedData = plugin.getPlayerData(killed);
 
-				killedData.setRole(PlayerModes.SPECTATOR);
+				killed.offer(PlayerKeys.ROLE, PlayerRoles.SPECTATOR);
 
 				if (optDamageSource.isPresent()) {
 					EntityDamageSource damageSource = optDamageSource.get();
@@ -71,9 +69,7 @@ public class PlayerEvents {
 						killed.kick(Text.of(TextColors.GOLD,
 								"You have been killed by " + killer.getName() + ". You'll be better next time ;)"));
 
-						PlayerData killerData = plugin.getPlayerData(killer);
-
-						killerData.addKill();
+						killer.offer(FighterKeys.KILLS, killer.get(FighterKeys.KILLS).get() + 1);
 
 						plugin.game().getServer().getBroadcastChannel()
 								.send(Text.of(TextColors.GOLD, killed.getName() + " has been killed by " + killer.getName()

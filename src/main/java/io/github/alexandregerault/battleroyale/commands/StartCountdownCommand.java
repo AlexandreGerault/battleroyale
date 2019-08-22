@@ -21,7 +21,7 @@ import org.spongepowered.api.world.World;
 
 import io.github.alexandregerault.battleroyale.main.BattleRoyale;
 import io.github.alexandregerault.battleroyale.main.GameStates;
-import io.github.alexandregerault.tasks.CountdownTask;
+import io.github.alexandregerault.battleroyale.tasks.CountdownTask;
 
 public class StartCountdownCommand implements CommandExecutor {
 

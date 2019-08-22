@@ -11,8 +11,9 @@ import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import io.github.alexandregerault.battleroyale.data.PlayerKeys;
 import io.github.alexandregerault.battleroyale.main.BattleRoyale;
-import io.github.alexandregerault.battleroyale.main.PlayerModes;
+import io.github.alexandregerault.battleroyale.main.PlayerRoles;
 
 public class TrackPlayerToolEvents {
 	
@@ -57,7 +58,7 @@ public class TrackPlayerToolEvents {
 			
 			Player iteratedPlayer = (Player) entity;
 			
-			if(!plugin.getPlayerData(iteratedPlayer).role().equals(PlayerModes.FIGHTER)) {
+			if(! iteratedPlayer.get(PlayerKeys.ROLE).get().equals(PlayerRoles.FIGHTER)) {
 				continue;
 			}
 

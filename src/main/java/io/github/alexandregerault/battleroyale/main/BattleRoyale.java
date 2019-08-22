@@ -15,19 +15,17 @@ import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 
 import com.flowpowered.math.vector.Vector3i;
-import com.google.common.collect.Maps;
 // Imports for logger
 import com.google.inject.Inject;
 
+import io.github.alexandregerault.battleroyale.data.PlayerKeys;
 import io.github.alexandregerault.battleroyale.registrers.CommandsRegister;
 import io.github.alexandregerault.battleroyale.registrers.EventsRegister;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 
@@ -46,7 +44,6 @@ public class BattleRoyale {
     @ConfigDir(sharedRoot = false)
     private File configDir;
     
-    private final Map<UUID, PlayerData> player_data = Maps.newHashMap();
     private File schematicsDir;
     private Vector3i spawn;
     private GameState state;
@@ -69,13 +66,13 @@ public class BattleRoyale {
     
     @Listener
     public void onServerStop(GameStoppingServerEvent event) {
-    	/*game.getServer().getWorlds().forEach(world -> {
+    	game.getServer().getWorlds().forEach(world -> {
     		world.getPlayers().forEach(player -> {
     			player.kick();
     		});
     		game.getServer().unloadWorld(world);
     		game.getServer().deleteWorld(game.getServer().getWorldProperties(world.getName()).get());
-    	});*/
+    	});
     }
     
     public Game game() {
@@ -98,17 +95,6 @@ public class BattleRoyale {
     	return this.schematicsDir;
     }
     
-    public PlayerData getPlayerData(Player pl) {
-        PlayerData data = this.player_data.get(pl.getUniqueId());
-        
-        if (data == null) {
-            data = new PlayerData(pl.getUniqueId());
-            this.player_data.put(pl.getUniqueId(), data);
-        }
-        
-        return data;
-    }
-    
     public Vector3i spawn() {
     	return this.spawn;
     }
@@ -129,10 +115,9 @@ public class BattleRoyale {
     	Collection<Player> players = game.getServer().getOnlinePlayers();
     	Collection<Player> fighters = new HashSet<Player>();
     	
-    	for(Player pl : players) {
-    		PlayerData data = getPlayerData(pl);
-    		if(data.role().equals(PlayerModes.FIGHTER)) {
-    			fighters.add(pl);
+    	for(Player player : players) {
+    		if(player.get(PlayerKeys.ROLE).get().equals(PlayerRoles.FIGHTER)) {
+    			fighters.add(player);
     		}
     	}
     	

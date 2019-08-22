@@ -1,4 +1,4 @@
-package io.github.alexandregerault.tasks;
+package io.github.alexandregerault.battleroyale.tasks;
 
 import java.util.function.Consumer;
 
