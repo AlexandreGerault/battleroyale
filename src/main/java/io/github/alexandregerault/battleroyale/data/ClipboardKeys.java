@@ -6,6 +6,7 @@ import javax.annotation.Generated;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.value.mutable.OptionalValue;
+import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.world.extent.ArchetypeVolume;
 
 @Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-08-22T18:21:11.356Z")
@@ -26,6 +27,7 @@ public class ClipboardKeys {
         		.name("Corner One")
         		.query(DataQuery.of('.', "clipboard.cornerone"))
         		.build();
+
         CORNER_TWO = Key.builder()
         		.type(new TypeToken<OptionalValue<Vector3i>>() {
 					private static final long serialVersionUID = 1L;})

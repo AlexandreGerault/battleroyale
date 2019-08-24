@@ -14,6 +14,7 @@ import org.spongepowered.api.text.format.TextColors;
 import com.flowpowered.math.vector.Vector3i;
 
 import io.github.alexandregerault.battleroyale.data.ClipboardKeys;
+import org.spongepowered.api.world.schematic.Schematic;
 
 public class CopySelectionCommand implements CommandExecutor {
 
@@ -44,9 +45,9 @@ public class CopySelectionCommand implements CommandExecutor {
 				  positionOne.min(positionTwo).getY(),
 				( positionOne.getZ() + positionTwo.getZ() )/2
 		);
-		
-		player.offer(ClipboardKeys.CLIPBOARD, Optional.of(player.getWorld().createArchetypeVolume(positionOne.min(positionTwo), positionOne.max(positionTwo), origin)));
-		
+
+		Schematic volume = Schematic.builder().volume(player.getWorld().getExtentView(positionOne, positionTwo)).build();
+		player.offer(ClipboardKeys.CLIPBOARD, Optional.of(volume));
 		player.sendMessage(Text.of(TextColors.LIGHT_PURPLE, "Copying from " + positionOne.toString() + " to " + positionTwo.toString() +"! Clipboard updated."));
 		
 		return CommandResult.success();

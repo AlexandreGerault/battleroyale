@@ -1,5 +1,6 @@
 package io.github.alexandregerault.battleroyale.commands.role;
 
+import io.github.alexandregerault.battleroyale.data.PlayerData;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -9,7 +10,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-import io.github.alexandregerault.battleroyale.data.PlayerData;
 import io.github.alexandregerault.battleroyale.data.PlayerKeys;
 import io.github.alexandregerault.battleroyale.main.PlayerRoles;
 

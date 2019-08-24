@@ -1,7 +1,5 @@
 package io.github.alexandregerault.battleroyale.data;
 
-import java.util.Optional;
-import javax.annotation.Generated;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
@@ -15,149 +13,144 @@ import org.spongepowered.api.data.persistence.InvalidDataException;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 import org.spongepowered.api.data.value.mutable.Value;
 
-@Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-08-22T18:12:38.216Z")
+import java.util.Optional;
+
 public class FighterData extends AbstractData<FighterData, FighterData.Immutable> {
 
     private Integer kills;
 
-    {
+    FighterData () {
+        this.kills = 0;
+
         registerGettersAndSetters();
     }
 
-    FighterData() {
-    }
-
-    FighterData(Integer kills) {
+    FighterData (Integer kills) {
         this.kills = kills;
+
+        registerGettersAndSetters();
     }
 
     @Override
-    protected void registerGettersAndSetters() {
-        registerFieldGetter(FighterKeys.KILLS, this::getKills);
-        registerFieldSetter(FighterKeys.KILLS, this::setKills);
+    public void registerGettersAndSetters () {
+        registerFieldGetter(FighterKeys.KILLS, () -> this.kills);
+
+        registerFieldSetter(FighterKeys.KILLS, kills -> this.kills = kills);
+
         registerKeyValue(FighterKeys.KILLS, this::kills);
     }
 
-    public int getKills() {
-        return kills;
-    }
-
-    public void setKills(int kills) {
-        this.kills = kills;
-    }
-
-    public Value<Integer> kills() {
+    public Value<Integer> kills () {
         return Sponge.getRegistry().getValueFactory().createValue(FighterKeys.KILLS, kills);
     }
 
     @Override
-    public Optional<FighterData> fill(DataHolder dataHolder, MergeFunction overlap) {
-        dataHolder.get(FighterData.class).ifPresent(that -> {
-                FighterData data = overlap.merge(this, that);
-                this.kills = data.kills;
-        });
+    public Optional<FighterData> fill (DataHolder dataHolder, MergeFunction overlap) {
+        Optional<FighterData> otherData_ = dataHolder.get(FighterData.class);
+
+        if (otherData_.isPresent() ) {
+            FighterData otherData = otherData_.get();
+            FighterData finalData = overlap.merge(this, otherData);
+
+            this.kills = finalData.kills;
+        }
+
         return Optional.of(this);
     }
 
     @Override
-    public Optional<FighterData> from(DataContainer container) {
-        return from((DataView) container);
+    public Optional<FighterData> from (DataContainer container) {
+        return from ( (DataView) container);
     }
 
-    public Optional<FighterData> from(DataView container) {
-        container.getObject(FighterKeys.KILLS.getQuery(), Integer.class).ifPresent(v -> kills = v);
-        return Optional.of(this);
-    }
+    public Optional<FighterData> from (DataView view) {
+        if ( view.contains(FighterKeys.KILLS.getQuery()) ) {
+            this.kills = view.getObject(FighterKeys.KILLS.getQuery(), Integer.class).get();
 
-    @Override
-    public FighterData copy() {
-        return new FighterData(kills);
-    }
-
-    @Override
-    public Immutable asImmutable() {
-        return new Immutable(kills);
+            return Optional.of(this);
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
-    public int getContentVersion() {
+    public FighterData copy () {
+        return new FighterData(this.kills);
+    }
+
+    @Override
+    public Immutable asImmutable () {
+        return new Immutable(this.kills);
+    }
+
+    @Override
+    public int getContentVersion () {
         return 1;
     }
 
-    @Override
-    public DataContainer toContainer() {
-        return super.toContainer()
-                .set(FighterKeys.KILLS.getQuery(), kills);
-    }
-
-    @Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-08-22T18:12:38.240Z")
+    /**
+     * Immutable class
+     */
     public static class Immutable extends AbstractImmutableData<Immutable, FighterData> {
+        private Integer kills;
 
-        private int kills;
-        {
+        public Immutable () {
             registerGetters();
         }
 
-        Immutable() {
-        }
-
-        Immutable(Integer kills) {
+        public Immutable (Integer kills) {
             this.kills = kills;
+
+            registerGetters();
         }
 
         @Override
-        protected void registerGetters() {
-            registerFieldGetter(FighterKeys.KILLS, this::getKills);
+        public void registerGetters () {
+            registerFieldGetter(FighterKeys.KILLS, () -> this.kills);
+
             registerKeyValue(FighterKeys.KILLS, this::kills);
         }
 
-        public int getKills() {
-            return kills;
-        }
-
-        public ImmutableValue<Integer> kills() {
+        public ImmutableValue<Integer> kills () {
             return Sponge.getRegistry().getValueFactory().createValue(FighterKeys.KILLS, kills).asImmutable();
         }
 
         @Override
-        public FighterData asMutable() {
-            return new FighterData(kills);
+        public FighterData asMutable () {
+            return new FighterData(this.kills);
         }
 
         @Override
-        public int getContentVersion() {
+        public int getContentVersion () {
             return 1;
         }
 
         @Override
         public DataContainer toContainer() {
             return super.toContainer()
-                    .set(FighterKeys.KILLS.getQuery(), kills);
+                    .set(FighterKeys.KILLS.getQuery(), this.kills);
         }
 
     }
 
-    @Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-08-22T18:12:38.244Z")
     public static class Builder extends AbstractDataBuilder<FighterData> implements DataManipulatorBuilder<FighterData, Immutable> {
-
-        public Builder() {
+        public Builder () {
             super(FighterData.class, 1);
         }
 
         @Override
-        public FighterData create() {
+        public FighterData create () {
             return new FighterData();
         }
 
         @Override
-        public Optional<FighterData> createFrom(DataHolder dataHolder) {
+        public Optional<FighterData> createFrom (DataHolder dataHolder) {
             return create().fill(dataHolder);
         }
 
         @Override
-        protected Optional<FighterData> buildContent(DataView container) throws InvalidDataException {
+        protected Optional<FighterData> buildContent (DataView container) throws InvalidDataException {
             return create().from(container);
         }
-
     }
 }

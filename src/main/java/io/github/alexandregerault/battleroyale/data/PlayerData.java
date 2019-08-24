@@ -1,8 +1,8 @@
 package io.github.alexandregerault.battleroyale.data;
 
+
 import io.github.alexandregerault.battleroyale.main.PlayerRole;
-import java.util.Optional;
-import javax.annotation.Generated;
+import io.github.alexandregerault.battleroyale.main.PlayerRoles;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
@@ -16,132 +16,133 @@ import org.spongepowered.api.data.persistence.InvalidDataException;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 import org.spongepowered.api.data.value.mutable.Value;
 
-@Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-08-22T18:12:53.052Z")
+import java.util.Optional;
+
 public class PlayerData extends AbstractData<PlayerData, PlayerData.Immutable> {
 
     private PlayerRole role;
 
-    {
+    public PlayerData () {
+        this.role = PlayerRoles.SPECTATOR;
+
         registerGettersAndSetters();
     }
 
-    PlayerData() {
-    }
-
-    PlayerData(PlayerRole role) {
+    public PlayerData (PlayerRole role) {
         this.role = role;
+
+        registerGettersAndSetters();
     }
 
     @Override
-    protected void registerGettersAndSetters() {
-        registerFieldGetter(PlayerKeys.ROLE, this::getRole);
-        registerFieldSetter(PlayerKeys.ROLE, this::setRole);
+    public void registerGettersAndSetters() {
+        registerFieldGetter(PlayerKeys.ROLE, () -> this.role);
+
+        registerFieldSetter(PlayerKeys.ROLE, role -> this.role = role);
+
         registerKeyValue(PlayerKeys.ROLE, this::role);
     }
 
-    public PlayerRole getRole() {
-        return role;
-    }
-
-    public void setRole(PlayerRole role) {
-        this.role = role;
-    }
-
-    public Value<PlayerRole> role() {
+    public Value<PlayerRole> role () {
         return Sponge.getRegistry().getValueFactory().createValue(PlayerKeys.ROLE, role);
     }
 
     @Override
-    public Optional<PlayerData> fill(DataHolder dataHolder, MergeFunction overlap) {
-        dataHolder.get(PlayerData.class).ifPresent(that -> {
-                PlayerData data = overlap.merge(this, that);
-                this.role = data.role;
-        });
+    public Optional<PlayerData> fill (DataHolder dataHolder, MergeFunction overlap) {
+        Optional<PlayerData> otherData_ = dataHolder.get(PlayerData.class);
+
+        if (otherData_.isPresent()) {
+            PlayerData otherData = otherData_.get();
+            PlayerData finalData = overlap.merge(this, otherData);
+
+            this.role = finalData.role;
+        }
+
         return Optional.of(this);
     }
 
     @Override
-    public Optional<PlayerData> from(DataContainer container) {
-        return from((DataView) container);
+    public Optional<PlayerData> from (DataContainer container) {
+        return from ( (DataView) container);
     }
 
-    public Optional<PlayerData> from(DataView container) {
-        container.getObject(PlayerKeys.ROLE.getQuery(), PlayerRole.class).ifPresent(v -> role = v);
-        return Optional.of(this);
-    }
+    public Optional<PlayerData> from (DataView view) {
+        if (view.contains(PlayerKeys.ROLE.getQuery())) {
+            this.role = view.getObject(PlayerKeys.ROLE.getQuery(), PlayerRole.class).get();
 
-    @Override
-    public PlayerData copy() {
-        return new PlayerData(role);
-    }
-
-    @Override
-    public Immutable asImmutable() {
-        return new Immutable(role);
+            return Optional.of(this);
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
-    public int getContentVersion() {
+    public PlayerData copy () {
+        return new PlayerData(this.role);
+    }
+
+    @Override
+    public Immutable asImmutable () {
+        return new Immutable(this.role);
+    }
+
+    @Override
+    public int getContentVersion () {
         return 1;
     }
 
-    @Override
-    public DataContainer toContainer() {
-        return super.toContainer()
-                .set(PlayerKeys.ROLE.getQuery(), role);
-    }
-
-    @Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-08-22T18:12:53.076Z")
+    /**
+     * Immutable class
+     */
     public static class Immutable extends AbstractImmutableData<Immutable, PlayerData> {
-
         private PlayerRole role;
-        {
+
+        public Immutable () {
+            this.role = PlayerRoles.SPECTATOR;
+
             registerGetters();
         }
 
-        Immutable() {
-        }
-
-        Immutable(PlayerRole role) {
+        public Immutable (PlayerRole role) {
             this.role = role;
+
+            registerGetters();
         }
 
         @Override
-        protected void registerGetters() {
-            registerFieldGetter(PlayerKeys.ROLE, this::getRole);
+        public void registerGetters () {
+            registerFieldGetter(PlayerKeys.ROLE, () -> this.role);
+
             registerKeyValue(PlayerKeys.ROLE, this::role);
         }
 
-        public PlayerRole getRole() {
-            return role;
-        }
-
-        public ImmutableValue<PlayerRole> role() {
+        public ImmutableValue<PlayerRole> role () {
             return Sponge.getRegistry().getValueFactory().createValue(PlayerKeys.ROLE, role).asImmutable();
         }
 
         @Override
-        public PlayerData asMutable() {
-            return new PlayerData(role);
+        public PlayerData asMutable () {
+            return new PlayerData (this.role);
         }
 
         @Override
-        public int getContentVersion() {
+        public int getContentVersion () {
             return 1;
         }
 
         @Override
-        public DataContainer toContainer() {
+        public DataContainer toContainer () {
             return super.toContainer()
-                    .set(PlayerKeys.ROLE.getQuery(), role);
+                    .set(PlayerKeys.ROLE.getQuery(), this.role);
         }
-
     }
 
-    @Generated(value = "flavor.pie.generator.data.DataManipulatorGenerator", date = "2019-08-22T18:12:53.081Z")
+    /**
+     * Builder
+     */
     public static class Builder extends AbstractDataBuilder<PlayerData> implements DataManipulatorBuilder<PlayerData, Immutable> {
 
-        public Builder() {
+        public Builder () {
             super(PlayerData.class, 1);
         }
 
@@ -151,14 +152,13 @@ public class PlayerData extends AbstractData<PlayerData, PlayerData.Immutable> {
         }
 
         @Override
-        public Optional<PlayerData> createFrom(DataHolder dataHolder) {
+        public Optional createFrom(DataHolder dataHolder) {
             return create().fill(dataHolder);
         }
 
         @Override
-        protected Optional<PlayerData> buildContent(DataView container) throws InvalidDataException {
+        protected Optional buildContent(DataView container) throws InvalidDataException {
             return create().from(container);
         }
-
     }
 }

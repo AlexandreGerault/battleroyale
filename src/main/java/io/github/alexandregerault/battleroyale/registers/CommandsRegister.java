@@ -1,15 +1,12 @@
 package io.github.alexandregerault.battleroyale.registers;
 
+import io.github.alexandregerault.battleroyale.commands.*;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 
 import io.github.alexandregerault.battleroyale.main.BattleRoyale;
-import io.github.alexandregerault.battleroyale.commands.BuildCornucopiaCommand;
-import io.github.alexandregerault.battleroyale.commands.CopySelectionCommand;
-import io.github.alexandregerault.battleroyale.commands.StartCountdownCommand;
-import io.github.alexandregerault.battleroyale.commands.StopGameCommand;
 import io.github.alexandregerault.battleroyale.commands.role.GetRoleCommand;
 import io.github.alexandregerault.battleroyale.commands.role.SetRoleCommand;
 import io.github.alexandregerault.battleroyale.commands.structure.BuildStructureCommand;
@@ -20,6 +17,15 @@ import io.github.alexandregerault.battleroyale.commands.structure.SaveStructureC
 public class CommandsRegister {
 	
 	public static void register(BattleRoyale plugin) {
+		CommandSpec scoreCommand = CommandSpec.builder()
+				.description(Text.of("Display the score of a player"))
+				.permission("brp.command.score")
+				.arguments(
+						GenericArguments.optional(GenericArguments.player(Text.of("player name")))
+				)
+				.executor(new ScoreCommand())
+				.build();
+
 		CommandSpec getRoleCommand = CommandSpec.builder()
 				.description(Text.of("Give your current role"))
 				.permission("brp.command.role.get")
@@ -112,6 +118,7 @@ public class CommandsRegister {
 				.child(copySelectionCommand, "copy", "cp")
 				.child(makeSpawnCommand, "make-spawn", "makespawn", "mks")
 				.child(roleCommands, "role")
+				.child(scoreCommand, "score")
 				.build();
 
 		Sponge.getCommandManager().register(plugin, rootCommand, "brp");

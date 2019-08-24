@@ -1,5 +1,7 @@
 package io.github.alexandregerault.battleroyale.commands.role;
 
+import io.github.alexandregerault.battleroyale.data.PlayerData;
+import io.github.alexandregerault.battleroyale.main.PlayerRoles;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -24,8 +26,8 @@ public class GetRoleCommand implements CommandExecutor {
 		}
 		
 		Player pl = (Player) src;
-		
-		pl.sendMessage(Text.of(TextColors.GREEN, "Your role is: " + pl.get(PlayerKeys.ROLE)));
+
+		pl.sendMessage(Text.of(TextColors.GREEN, "Your role is: " + pl.get(PlayerKeys.ROLE).get().name()));
 		return CommandResult.success();
 	}
 

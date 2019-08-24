@@ -24,7 +24,7 @@ public class ClipboardEvents {
         Optional<ItemStack> item = player.getItemInHand(HandTypes.MAIN_HAND);
         if (item.isPresent() && item.get().getType().equals(ItemTypes.GOLDEN_HOE) && event.getTargetBlock() != BlockSnapshot.NONE) {
         	player.offer(ClipboardKeys.CORNER_ONE, Optional.of(event.getTargetBlock().getPosition()));
-            player.sendMessage(Text.of(TextColors.GREEN, "Position 1 set to " + player.get(ClipboardKeys.CORNER_ONE)));
+            player.sendMessage(Text.of(TextColors.GREEN, "Position 1 set to " + player.get(ClipboardKeys.CORNER_ONE).get().get()));
             event.setCancelled(true);
         }
         
@@ -36,7 +36,7 @@ public class ClipboardEvents {
         Optional<ItemStack> item = player.getItemInHand(HandTypes.MAIN_HAND);
         if (item.isPresent() && item.get().getType().equals(ItemTypes.GOLDEN_HOE) && event.getTargetBlock() != BlockSnapshot.NONE) {
         	player.offer(ClipboardKeys.CORNER_TWO, Optional.of(event.getTargetBlock().getPosition()));
-            player.sendMessage(Text.of(TextColors.GREEN, "Position 2 set to " + player.get(ClipboardKeys.CORNER_TWO)));
+            player.sendMessage(Text.of(TextColors.GREEN, "Position 2 set to " + player.get(ClipboardKeys.CORNER_TWO).get().get()));
             event.setCancelled(true);
         }
         

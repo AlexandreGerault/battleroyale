@@ -1,5 +1,6 @@
 package io.github.alexandregerault.battleroyale.main;
 
+import io.github.alexandregerault.battleroyale.data.*;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.world.Location;
@@ -22,12 +23,6 @@ import com.flowpowered.math.vector.Vector3i;
 // Imports for logger
 import com.google.inject.Inject;
 
-import io.github.alexandregerault.battleroyale.data.ClipboardData;
-import io.github.alexandregerault.battleroyale.data.ClipboardKeys;
-import io.github.alexandregerault.battleroyale.data.FighterData;
-import io.github.alexandregerault.battleroyale.data.FighterKeys;
-import io.github.alexandregerault.battleroyale.data.PlayerData;
-import io.github.alexandregerault.battleroyale.data.PlayerKeys;
 import io.github.alexandregerault.battleroyale.registers.CommandsRegister;
 import io.github.alexandregerault.battleroyale.registers.EventsRegister;
 
