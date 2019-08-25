@@ -10,11 +10,13 @@ import org.spongepowered.api.data.manipulator.immutable.common.AbstractImmutable
 import org.spongepowered.api.data.manipulator.mutable.common.AbstractData;
 import org.spongepowered.api.data.merge.MergeFunction;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
+import org.spongepowered.api.data.persistence.DataTranslators;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 import org.spongepowered.api.data.value.mutable.OptionalValue;
-import org.spongepowered.api.world.extent.ArchetypeVolume;
+import org.spongepowered.api.world.schematic.Schematic;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 
 
@@ -22,11 +24,11 @@ public class ClipboardData extends AbstractData<ClipboardData, ClipboardData.Imm
 
     private Vector3i cornerOne;
     private Vector3i cornerTwo;
-    private ArchetypeVolume clipboard;
+    private Schematic clipboard;
 
-    ClipboardData () {}
+    private ClipboardData() {}
 
-    ClipboardData (Vector3i cornerOne, Vector3i cornerTwo, ArchetypeVolume clipboard) {
+    private ClipboardData(Vector3i cornerOne, Vector3i cornerTwo, Schematic clipboard) {
         this.cornerOne = cornerOne;
         this.cornerTwo = cornerTwo;
         this.clipboard = clipboard;
@@ -40,27 +42,27 @@ public class ClipboardData extends AbstractData<ClipboardData, ClipboardData.Imm
         registerFieldGetter(ClipboardKeys.CORNER_TWO, () -> Optional.ofNullable(this.cornerTwo));
         registerFieldGetter(ClipboardKeys.CLIPBOARD, () -> Optional.ofNullable(this.clipboard));
 
-        registerFieldSetter(ClipboardKeys.CORNER_ONE, cornerOne -> this.cornerOne = cornerOne.get());
-        registerFieldSetter(ClipboardKeys.CORNER_TWO, cornerTwo -> this.cornerTwo = cornerTwo.get());
-        registerFieldSetter(ClipboardKeys.CLIPBOARD, clipboard -> this.clipboard = clipboard.get());
+        registerFieldSetter(ClipboardKeys.CORNER_ONE, cornerOne -> cornerOne.ifPresent(vector3i -> this.cornerOne = vector3i));
+        registerFieldSetter(ClipboardKeys.CORNER_TWO, cornerTwo -> cornerTwo.ifPresent(vector3i -> this.cornerTwo = vector3i));
+        registerFieldSetter(ClipboardKeys.CLIPBOARD, clipboard -> clipboard.ifPresent(schematic -> this.clipboard = schematic));
 
         registerKeyValue(ClipboardKeys.CORNER_ONE, this::cornerOne);
         registerKeyValue(ClipboardKeys.CORNER_TWO, this::cornerTwo);
         registerKeyValue(ClipboardKeys.CLIPBOARD, this::clipboard);
     }
 
-    public OptionalValue<Vector3i> cornerOne () {
+    private OptionalValue<Vector3i> cornerOne() {
         return Sponge.getRegistry().getValueFactory().createOptionalValue(ClipboardKeys.CORNER_ONE, cornerOne);
     }
-    public OptionalValue<Vector3i> cornerTwo () {
+    private OptionalValue<Vector3i> cornerTwo() {
         return Sponge.getRegistry().getValueFactory().createOptionalValue(ClipboardKeys.CORNER_TWO, cornerTwo);
     }
-    public OptionalValue<ArchetypeVolume> clipboard () {
+    private OptionalValue<Schematic> clipboard() {
         return Sponge.getRegistry().getValueFactory().createOptionalValue(ClipboardKeys.CLIPBOARD, clipboard);
     }
 
-    @Override
-    public Optional<ClipboardData> fill (DataHolder dataHolder, MergeFunction overlap) {
+    @Override @Nonnull
+    public Optional<ClipboardData> fill (DataHolder dataHolder,@Nonnull MergeFunction overlap) {
         Optional<ClipboardData> otherData_ = dataHolder.get(ClipboardData.class);
 
         if( otherData_.isPresent() ) {
@@ -75,18 +77,18 @@ public class ClipboardData extends AbstractData<ClipboardData, ClipboardData.Imm
         return Optional.of(this);
     }
 
-    @Override
-    public Optional<ClipboardData> from (DataContainer container) {
+    @Override @Nonnull
+    public Optional<ClipboardData> from (@Nonnull DataContainer container) {
         return from( (DataView) container);
     }
 
-    public Optional<ClipboardData> from (DataView view) {
+    private Optional<ClipboardData> from(DataView view) {
         if (view.contains(ClipboardKeys.CORNER_ONE.getQuery())
         && view.contains(ClipboardKeys.CORNER_TWO.getQuery())
         && view.contains(ClipboardKeys.CLIPBOARD.getQuery())) {
-            this.cornerOne = view.getObject(ClipboardKeys.CORNER_ONE.getQuery(), Vector3i.class).get();
-            this.cornerTwo = view.getObject(ClipboardKeys.CORNER_TWO.getQuery(), Vector3i.class).get();
-            this.clipboard = view.getObject(ClipboardKeys.CLIPBOARD.getQuery(), ArchetypeVolume.class).get();
+            view.getObject(ClipboardKeys.CORNER_ONE.getQuery(), Vector3i.class).ifPresent(object -> this.cornerOne = object);
+            view.getObject(ClipboardKeys.CORNER_TWO.getQuery(), Vector3i.class).ifPresent(object -> this.cornerTwo = object);
+            view.getObject(ClipboardKeys.CLIPBOARD.getQuery(), Schematic.class).ifPresent(object -> this.clipboard = object);
 
             return Optional.of(this);
         } else {
@@ -94,12 +96,12 @@ public class ClipboardData extends AbstractData<ClipboardData, ClipboardData.Imm
         }
     }
 
-    @Override
+    @Override @Nonnull
     public ClipboardData copy () {
         return new ClipboardData(this.cornerOne, this.cornerTwo, this.clipboard);
     }
 
-    @Override
+    @Override @Nonnull
     public Immutable asImmutable () {
         return new Immutable(this.cornerOne, this.cornerTwo, this.clipboard);
     }
@@ -109,12 +111,18 @@ public class ClipboardData extends AbstractData<ClipboardData, ClipboardData.Imm
         return 1;
     }
 
-    @Override
+    @Override @Nonnull
     public DataContainer toContainer () {
-        return super.toContainer()
+        DataContainer container = super.toContainer();
+        container = container
                 .set(ClipboardKeys.CORNER_ONE.getQuery(), this.cornerOne)
-                .set(ClipboardKeys.CORNER_TWO.getQuery(), this.cornerTwo)
-                .set(ClipboardKeys.CLIPBOARD.getQuery(), this.clipboard);
+                .set(ClipboardKeys.CORNER_TWO.getQuery(), this.cornerTwo);
+
+        if (this.clipboard != null) {
+            container = container.set(ClipboardKeys.CLIPBOARD.getQuery(), DataTranslators.SCHEMATIC.translate(this.clipboard));
+        }
+
+        return container;
     }
 
     /**
@@ -124,11 +132,9 @@ public class ClipboardData extends AbstractData<ClipboardData, ClipboardData.Imm
 
         private Vector3i cornerOne;
         private Vector3i cornerTwo;
-        private ArchetypeVolume clipboard;
+        private Schematic clipboard;
 
-        public Immutable () {}
-
-        public Immutable(Vector3i cornerOne, Vector3i cornerTwo, ArchetypeVolume clipboard) {
+        Immutable(Vector3i cornerOne, Vector3i cornerTwo, Schematic clipboard) {
             this.cornerOne = cornerOne;
             this.cornerTwo = cornerTwo;
             this.clipboard = clipboard;
@@ -147,19 +153,19 @@ public class ClipboardData extends AbstractData<ClipboardData, ClipboardData.Imm
             registerKeyValue(ClipboardKeys.CLIPBOARD, this::clipboard);
         }
 
-        public ImmutableValue<Optional<Vector3i>> cornerOne() {
+        ImmutableValue<Optional<Vector3i>> cornerOne() {
             return Sponge.getRegistry().getValueFactory().createOptionalValue(ClipboardKeys.CORNER_ONE, cornerOne).asImmutable();
         }
 
-        public ImmutableValue<Optional<Vector3i>> cornerTwo() {
+        ImmutableValue<Optional<Vector3i>> cornerTwo() {
             return Sponge.getRegistry().getValueFactory().createOptionalValue(ClipboardKeys.CORNER_TWO, cornerTwo).asImmutable();
         }
 
-        public ImmutableValue<Optional<ArchetypeVolume>> clipboard() {
+        ImmutableValue<Optional<Schematic>> clipboard() {
             return Sponge.getRegistry().getValueFactory().createOptionalValue(ClipboardKeys.CLIPBOARD, clipboard).asImmutable();
         }
 
-        @Override
+        @Override @Nonnull
         public ClipboardData asMutable () {
             return new ClipboardData(this.cornerOne, this.cornerTwo, this.clipboard);
         }
@@ -169,7 +175,7 @@ public class ClipboardData extends AbstractData<ClipboardData, ClipboardData.Imm
             return 1;
         }
 
-        @Override
+        @Override @Nonnull
         public DataContainer toContainer () {
             return super.toContainer()
                     .set(ClipboardKeys.CORNER_ONE.getQuery(), this.cornerOne)
@@ -184,18 +190,18 @@ public class ClipboardData extends AbstractData<ClipboardData, ClipboardData.Imm
             super(ClipboardData.class, 1);
         }
 
-        @Override
+        @Override @Nonnull
         public ClipboardData create() {
             return new ClipboardData();
         }
 
-        @Override
-        public Optional<ClipboardData> createFrom(DataHolder dataHolder) {
+        @Override @Nonnull
+        public Optional<ClipboardData> createFrom(@Nonnull DataHolder dataHolder) {
             return create().fill(dataHolder);
         }
 
-        @Override
-        protected Optional<ClipboardData> buildContent(DataView container) throws InvalidDataException {
+        @Override @Nonnull
+        protected Optional<ClipboardData> buildContent(@Nonnull DataView container) throws InvalidDataException {
             return create().from(container);
         }
     }
