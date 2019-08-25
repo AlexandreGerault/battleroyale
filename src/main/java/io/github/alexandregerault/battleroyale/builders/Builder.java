@@ -26,10 +26,10 @@ public class Builder {
 		//If the file doesn't exist, throw FileNotFoundException
         if (!inputFile.exists()) {
             plugin_.plugin().getLogger().error("File doesn't exist");
-            return;
+            throw new FileNotFoundException();
         }
         
-        DataContainer schematicData = null;
+        DataContainer schematicData;
         
         try {
             schematicData = DataFormats.NBT.readFrom(new GZIPInputStream(new FileInputStream(inputFile)));
@@ -54,7 +54,5 @@ public class Builder {
 		}
         
         schematic.apply(loc_.add(0, schematic.getBlockSize().getY() - 1, 0), BlockChangeFlags.ALL);
-		
-		return;
 	}
 }

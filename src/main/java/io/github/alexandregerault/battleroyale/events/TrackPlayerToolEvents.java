@@ -1,5 +1,6 @@
 package io.github.alexandregerault.battleroyale.events;
 
+import io.github.alexandregerault.battleroyale.main.PlayerRole;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
@@ -13,7 +14,6 @@ import org.spongepowered.api.text.format.TextColors;
 
 import io.github.alexandregerault.battleroyale.data.PlayerKeys;
 import io.github.alexandregerault.battleroyale.main.BattleRoyale;
-import io.github.alexandregerault.battleroyale.main.PlayerRoles;
 
 public class TrackPlayerToolEvents {
 	
@@ -40,8 +40,6 @@ public class TrackPlayerToolEvents {
 				player.sendMessage(Text.of(TextColors.RED, "You're the last fighter: there is nobody to track."));
 			}
 		}
-		
-		return;
 	}
 
 	private Player getClosestPlayer(final Player player) {
@@ -52,13 +50,18 @@ public class TrackPlayerToolEvents {
 			if (entity == player) {
 				continue;
 			}
-			if (!(entity instanceof Player)) {
+			else if (!(entity instanceof Player)) {
 				continue;
 			}
 			
 			Player iteratedPlayer = (Player) entity;
+
+			if (!iteratedPlayer.get(PlayerKeys.ROLE).isPresent()) {
+				plugin.logger().error("PlayerKeys.ROLE not set for" + iteratedPlayer.getName());
+				throw new RuntimeException("Optional value not present");
+			}
 			
-			if(! iteratedPlayer.get(PlayerKeys.ROLE).get().equals(PlayerRoles.FIGHTER)) {
+			if(! iteratedPlayer.get(PlayerKeys.ROLE).get().equals(PlayerRole.FIGHTER)) {
 				continue;
 			}
 
@@ -69,8 +72,6 @@ public class TrackPlayerToolEvents {
 			}
 		}
 
-		Player nearestPlayer = (Player) closest;
-
-		return nearestPlayer;
+		return (Player) closest;
 	}
 }

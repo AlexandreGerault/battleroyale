@@ -2,7 +2,6 @@ package io.github.alexandregerault.battleroyale.commands.structure;
 
 import java.io.FileNotFoundException;
 
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -21,13 +20,14 @@ public class BuildStructureCommand implements CommandExecutor {
 	public BuildStructureCommand(BattleRoyale plugin_) {
 		this.plugin = plugin_;
 	}
+
 	@Override
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+	public CommandResult execute(CommandSource src, CommandContext args) {
 		if(src instanceof Player) {
 			src.sendMessage(Text.of(TextColors.GREEN, "You want to build here"));
 			
 			try {
-				Builder.build(((Player) src).getLocation(), args.<String>getOne("structure name").get(), this.plugin);
+				Builder.build(((Player) src).getLocation(), args.requireOne("structure name"), this.plugin);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}

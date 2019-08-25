@@ -1,7 +1,6 @@
 package io.github.alexandregerault.battleroyale.commands.role;
 
-import io.github.alexandregerault.battleroyale.data.PlayerData;
-import org.spongepowered.api.command.CommandException;
+import io.github.alexandregerault.battleroyale.main.PlayerRole;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -11,36 +10,20 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import io.github.alexandregerault.battleroyale.data.PlayerKeys;
-import io.github.alexandregerault.battleroyale.main.PlayerRoles;
 
 public class SetRoleCommand implements CommandExecutor {
 	
 	public SetRoleCommand () {}
 
 	@Override
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		String roleName = args.<String>getOne("role").get();
-		Player p = args.<Player>getOne("player name").get();
+	public CommandResult execute(CommandSource src, CommandContext args) {
+		PlayerRole role = args.requireOne("role");
+		Player player = args.requireOne("player name");
 
-		p.offer(p.getOrCreate(PlayerData.class).get());
-		
-		switch (roleName.toLowerCase()) {
-			case "fighter":
-				p.offer(PlayerKeys.ROLE, PlayerRoles.FIGHTER);
-				break;
-			case "spectator":
-				p.offer(PlayerKeys.ROLE, PlayerRoles.SPECTATOR);
-				break;
-			case "streamer":
-				p.offer(PlayerKeys.ROLE, PlayerRoles.STREAMER);
-				break;
-			default:
-				src.sendMessage(Text.of(TextColors.RED, "Error, specified role doesn't exist!"));
-				return CommandResult.success();
-		}
-		
-		p.sendMessage(Text.of(TextColors.GREEN, p.getName(), "'s role is now: ", p.get(PlayerKeys.ROLE).get().name()));
-		
+		player.offer(PlayerKeys.ROLE, role);
+
+		player.sendMessage(Text.of(TextColors.GREEN, player.getName(), "'s role is now: ", role.name()));
+
 		return CommandResult.success();
 	}
 

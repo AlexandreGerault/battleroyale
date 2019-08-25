@@ -35,19 +35,22 @@ public class SaveStructureCommand implements CommandExecutor {
 		}
 		
 		Player player = (Player) source;
-		String name = args.<String>getOne("structure name").get();
-		
+		String name = args.requireOne("structure name");
+
+		if (!player.get(ClipboardKeys.CORNER_ONE).isPresent() || !player.get(ClipboardKeys.CORNER_TWO).isPresent()) {
+			throw new CommandException(Text.of("Error, you must have selected two corners with golden hoe"));
+		}
+
 		Optional<Vector3i> pos1 = player.get(ClipboardKeys.CORNER_ONE).get();
 		Optional<Vector3i> pos2 = player.get(ClipboardKeys.CORNER_TWO).get();
-		
+
 		if (!pos1.isPresent() || !pos2.isPresent()) {
-			player.sendMessage(Text.of(TextColors.RED, "Error, you must have selected two corners with golden hoe"));
-			return CommandResult.success();
+			throw new CommandException(Text.of("Error, you must have selected two corners with golden hoe"));
 		}
 		
 		Vector3i min = pos1.get().min(pos2.get());
         Vector3i max = pos1.get().max(pos2.get());
-        Vector3i origin = new Vector3i((min.getX() + max.getX())/2, min(min.getY(), max.getY()), (min.getZ() + max.getZ())/2);
+        Vector3i origin = new Vector3i((min.getX() + max.getX())/2, Math.min(min.getY(), max.getY()), (min.getZ() + max.getZ())/2);
 
         ArchetypeVolume volume = player.getWorld().createArchetypeVolume(min, max, origin);
         
@@ -58,11 +61,6 @@ public class SaveStructureCommand implements CommandExecutor {
         }
 
 		return CommandResult.success();
-	}
-
-	private int min(int a, int b) {
-		if (a < b) return a;
-		else return b;
 	}
 
 }

@@ -88,6 +88,12 @@ public class FighterData extends AbstractData<FighterData, FighterData.Immutable
         return 1;
     }
 
+    @Override
+    public DataContainer toContainer() {
+        return super.toContainer()
+                .set(FighterKeys.KILLS.getQuery(), this.kills);
+    }
+
     /**
      * Immutable class
      */

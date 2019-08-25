@@ -6,8 +6,6 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.asset.Asset;
-import org.spongepowered.api.asset.AssetManager;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.data.DataRegistration;
 import org.spongepowered.api.data.key.Key;
@@ -29,7 +27,6 @@ import io.github.alexandregerault.battleroyale.registers.EventsRegister;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 
@@ -38,8 +35,8 @@ public class BattleRoyale {
 	
 	@Inject
 	private Game game;
-	@Inject
-	private AssetManager assets;
+	/*@Inject
+	private AssetManager assets;*/
 	@Inject
 	private PluginContainer container;
 	@Inject
@@ -64,7 +61,7 @@ public class BattleRoyale {
 	}
 	
     @Listener
-    public void onPreInit(GamePreInitializationEvent e) {
+    public void onPreInit(GamePreInitializationEvent event) {
     	DataRegistration.builder()
     	.dataClass(ClipboardData.class)
     	.immutableClass(ClipboardData.Immutable.class)
@@ -91,13 +88,15 @@ public class BattleRoyale {
     }
     
 	@Listener
-	public void onInit(GameInitializationEvent e){
+	public void onInit(GameInitializationEvent event){
 		CommandsRegister.register(this);
 		EventsRegister.register(this);
 		
 		this.schematicsDir = new File(this.configDir, "structures");
-        this.schematicsDir.mkdirs();
-        this.state = GameStates.LOBBY;
+        if(this.schematicsDir.mkdirs())
+        	this.state = GameState.LOBBY;
+        else
+        	throw new RuntimeException();
 	}
 	
     @Listener
@@ -112,18 +111,18 @@ public class BattleRoyale {
     public Game game() {
     	return this.game;
     }
-    
-    public Optional<Asset> getAsset(String assetName) {
+
+    /*public Optional<Asset> getAsset(String assetName) {
     	return this.assets.getAsset(assetName);
-    }
+    }*/
     
     public PluginContainer plugin() {
     	return this.container;
     }
     
-    public File configDir() {
+    /*public File configDir() {
     	return this.configDir;
-    }
+    }*/
     
     public File schematicDir() {
     	return this.schematicsDir;
@@ -147,14 +146,18 @@ public class BattleRoyale {
     
     public Collection<Player> fighters() {
     	Collection<Player> players = game.getServer().getOnlinePlayers();
-    	Collection<Player> fighters = new HashSet<Player>();
+    	Collection<Player> fighters = new HashSet<>();
     	
     	for(Player player : players) {
-    		if(player.get(PlayerKeys.ROLE).get().equals(PlayerRoles.FIGHTER)) {
+    		if(player.get(PlayerKeys.ROLE).isPresent() && player.get(PlayerKeys.ROLE).get().equals(PlayerRole.FIGHTER)) {
     			fighters.add(player);
     		}
     	}
     	
     	return fighters;
     }
+
+    public Logger logger() {
+    	return this.logger;
+	}
 }

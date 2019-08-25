@@ -1,8 +1,8 @@
 package io.github.alexandregerault.battleroyale.commands.structure;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Objects;
 
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -25,19 +25,22 @@ public class ListStructureCommand implements CommandExecutor {
 	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 		File directory = plugin.schematicDir();
 		File[] schematicFiles = directory.listFiles();
-		
-		List<String> results = new ArrayList<String>();
-		
-		src.sendMessage(Text.of("List of saved schematics:"));
-		for(File file : schematicFiles) {
-			if(file.getName().endsWith(".schematic")) {
-				String result = file.getName().subSequence(0, file.getName().length() - ".schematic".length()).toString();
-				results.add(result);
-				src.sendMessage(Text.of("[•] " + result));
+
+		if (Objects.requireNonNull(schematicFiles).length > 0) {
+			plugin.plugin().getLogger().info(Arrays.toString(schematicFiles));
+			src.sendMessage(Text.of("List of saved schematics:"));
+
+			for(File file: schematicFiles) {
+				if(file.getName().endsWith(".schematic")) {
+					String result = file.getName().subSequence(0, file.getName().length() - ".schematic".length()).toString();
+					src.sendMessage(Text.of("[•] " + result));
+				}
 			}
+
+			return CommandResult.success();
+		} else {
+			throw new CommandException(Text.of("No structures files"));
 		}
-		// TODO Auto-generated method stub
-		return CommandResult.success();
 	}
 
 }

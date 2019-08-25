@@ -12,11 +12,13 @@ import org.spongepowered.api.text.Text;
 public class ScoreCommand implements CommandExecutor {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+        if ( !(src instanceof Player) && !args.getOne(Text.of("player name")).isPresent() ) {
+            throw new CommandException(Text.of("When the command is ran via the console, you must specify a player name"));
+        }
 
-//        if (! (src instanceof Player) )
         Player target = args.<Player>getOne("player name").isPresent() ? args.<Player>getOne("player name").get() : (Player) src;
 
-        src.sendMessage(Text.of(target.getName(), " has killed ", target.get(FighterKeys.KILLS).get(), " other players."));
+        target.get(FighterKeys.KILLS).ifPresent(kills -> src.sendMessage(Text.of(target.getName(), " has killed ", kills, " other players.")));
 
         return CommandResult.success();
     }

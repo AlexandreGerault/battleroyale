@@ -23,7 +23,6 @@ public class EndCountdownTask implements Consumer<Task> {
 		if(seconds > 0) {
 			plugin.game().getServer().getBroadcastChannel().send(Text.of(TextColors.GREEN, seconds + " seconds left before the server stop!"));
 			seconds--;
-			return;
 		} else if(seconds == 0) {
 			plugin.game().getServer().getBroadcastChannel().send(Text.of(TextColors.GREEN, "The server is about to stop!"));
 			task.cancel();

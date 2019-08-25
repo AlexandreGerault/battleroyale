@@ -4,6 +4,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import io.github.alexandregerault.battleroyale.data.*;
+import io.github.alexandregerault.battleroyale.main.GameState;
+import io.github.alexandregerault.battleroyale.main.PlayerRole;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -16,8 +18,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import io.github.alexandregerault.battleroyale.main.BattleRoyale;
-import io.github.alexandregerault.battleroyale.main.GameStates;
-import io.github.alexandregerault.battleroyale.main.PlayerRoles;
 import io.github.alexandregerault.battleroyale.tasks.EndCountdownTask;
 
 public class PlayerEvents {
@@ -29,7 +29,7 @@ public class PlayerEvents {
 
 	@Listener
 	public void onPlayerMove(MoveEntityEvent event) {
-		if (event.getTargetEntity() instanceof Player && plugin.state().equals(GameStates.COUNTDOWN)) {
+		if (event.getTargetEntity() instanceof Player && plugin.state().equals(GameState.COUNTDOWN)) {
 			event.setCancelled(true);
 		}
 	}
@@ -37,27 +37,26 @@ public class PlayerEvents {
 	@Listener
 	public void onPlayerConnect(ClientConnectionEvent.Join event) {
 
-		if (!plugin.state().equals(GameStates.LOBBY)) {
+		if (!plugin.state().equals(GameState.LOBBY)) {
 			Player player = event.getTargetEntity();
 			player.kick(Text.of(TextColors.RED, "A game is already in progress, sorry"));
 		} else {
 			Player player = (Player) event.getSource();
 			player.offer(player.getOrCreate(ClipboardData.class).get());
 			player.offer(player.getOrCreate(PlayerData.class).get());
-			player.offer(player.getOrCreate(FighterData.class).get());
 		}
 	}
 
 	@Listener
 	public void onPlayerKillPlayer(DestructEntityEvent.Death event) {
-		if (plugin.state().equals(GameStates.BATTLE)) {
+		if (plugin.state().equals(GameState.BATTLE)) {
 			Optional<EntityDamageSource> optDamageSource = event.getCause().first(EntityDamageSource.class);
 
 			// Is the died entity a player?
 			if (event.getTargetEntity() instanceof Player) {
 				Player killed = (Player) event.getTargetEntity();
 
-				killed.offer(PlayerKeys.ROLE, PlayerRoles.SPECTATOR);
+				killed.offer(PlayerKeys.ROLE, PlayerRole.SPECTATOR);
 
 				if (optDamageSource.isPresent()) {
 					EntityDamageSource damageSource = optDamageSource.get();
@@ -71,7 +70,13 @@ public class PlayerEvents {
 						killed.kick(Text.of(TextColors.GOLD,
 								"You have been killed by " + killer.getName() + ". You'll be better next time ;)"));
 
-						killer.offer(FighterKeys.KILLS, killer.get(FighterKeys.KILLS).get() + 1);
+						if (! killer.get(FighterKeys.KILLS).isPresent()) {
+							plugin.logger().error("An error has occurred: FighterKeys.KILLS is not present for " + killer.getName());
+						}
+
+						int kills = killer.get(FighterKeys.KILLS).get() + 1;
+
+						killer.offer(FighterKeys.KILLS, kills);
 
 						plugin.game().getServer().getBroadcastChannel()
 								.send(Text.of(TextColors.GOLD, killed.getName() + " has been killed by " + killer.getName()
@@ -84,7 +89,7 @@ public class PlayerEvents {
 					Player winner = plugin.fighters().iterator().next();
 					plugin.game().getServer().getBroadcastChannel().send(Text.of(TextColors.GOLD,
 							"The game is over and the winner is " + winner.getName() + ". You can congratulate him!"));
-					plugin.setState(GameStates.END);
+					plugin.setState(GameState.END);
 					Task task = Task.builder().execute(new EndCountdownTask(plugin, 5)).interval(1, TimeUnit.SECONDS)
 							.name("End Countdown Task").submit(plugin);
 					plugin.plugin().getLogger().info(task.getName() + " task has been started");

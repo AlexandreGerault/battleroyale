@@ -2,7 +2,6 @@ package io.github.alexandregerault.battleroyale.data;
 
 
 import io.github.alexandregerault.battleroyale.main.PlayerRole;
-import io.github.alexandregerault.battleroyale.main.PlayerRoles;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
@@ -23,7 +22,7 @@ public class PlayerData extends AbstractData<PlayerData, PlayerData.Immutable> {
     private PlayerRole role;
 
     public PlayerData () {
-        this.role = PlayerRoles.SPECTATOR;
+        this.role = PlayerRole.SPECTATOR;
 
         registerGettersAndSetters();
     }
@@ -68,7 +67,7 @@ public class PlayerData extends AbstractData<PlayerData, PlayerData.Immutable> {
 
     public Optional<PlayerData> from (DataView view) {
         if (view.contains(PlayerKeys.ROLE.getQuery())) {
-            this.role = view.getObject(PlayerKeys.ROLE.getQuery(), PlayerRole.class).get();
+            view.getObject(PlayerKeys.ROLE.getQuery(), String.class).ifPresent(name -> this.role = PlayerRole.valueOf(name));
 
             return Optional.of(this);
         } else {
@@ -91,6 +90,12 @@ public class PlayerData extends AbstractData<PlayerData, PlayerData.Immutable> {
         return 1;
     }
 
+    @Override
+    public DataContainer toContainer () {
+        return super.toContainer()
+                .set(PlayerKeys.ROLE.getQuery(), this.role.name());
+    }
+
     /**
      * Immutable class
      */
@@ -98,7 +103,7 @@ public class PlayerData extends AbstractData<PlayerData, PlayerData.Immutable> {
         private PlayerRole role;
 
         public Immutable () {
-            this.role = PlayerRoles.SPECTATOR;
+            this.role = PlayerRole.SPECTATOR;
 
             registerGetters();
         }

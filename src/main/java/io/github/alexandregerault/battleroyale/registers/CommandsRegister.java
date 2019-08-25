@@ -1,6 +1,7 @@
 package io.github.alexandregerault.battleroyale.registers;
 
 import io.github.alexandregerault.battleroyale.commands.*;
+import io.github.alexandregerault.battleroyale.main.PlayerRole;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -36,14 +37,14 @@ public class CommandsRegister {
 				.description(Text.of("Set a specified role to a player"))
 				.permission("brp.command.role.set")
 				.arguments(
-						GenericArguments.onlyOne(GenericArguments.player(Text.of("player name"))),
-						GenericArguments.onlyOne(GenericArguments.string(Text.of("role"))))
+						GenericArguments.player(Text.of("player name")),
+						GenericArguments.enumValue(Text.of("role"), PlayerRole.class))
 				.executor(new SetRoleCommand())
 				.build();
 		
 		CommandSpec makeSpawnCommand = CommandSpec.builder()
 			    .description(Text.of("Command generating the spawn structure"))
-			    .permission("brp.command.makespawn")
+			    .permission("brp.command.make-spawn")
 			    .executor(new BuildCornucopiaCommand(plugin))
 			    .build();
 
@@ -80,14 +81,14 @@ public class CommandsRegister {
 				.executor(new ListStructureCommand(plugin))
 				.build();
 
-		CommandSpec startCoundtownCommand = CommandSpec.builder()
+		CommandSpec startCountdownCommand = CommandSpec.builder()
 				.permission("brp.command.start")
 				.description(Text.of("Start the countdown and spawn the players around the cornucopia"))
-				.arguments(GenericArguments.onlyOne(GenericArguments.integer(Text.of("coutdown duration"))))
+				.arguments(GenericArguments.onlyOne(GenericArguments.integer(Text.of("countdown duration"))))
 				.executor(new StartCountdownCommand(plugin))
 				.build();
 		
-		CommandSpec stopCoundtownCommand = CommandSpec.builder()
+		CommandSpec stopGameCommand = CommandSpec.builder()
 				.permission("brp.command.stop")
 				.description(Text.of("Manually stop the current game"))
 				.executor(new StopGameCommand(plugin))
@@ -113,10 +114,10 @@ public class CommandsRegister {
 				.permission("brp")
 				.description(Text.of("Battle Royale commands"))
 				.child(structureCommands, "structure", "str")
-				.child(startCoundtownCommand, "start")
-				.child(stopCoundtownCommand, "stop")
+				.child(startCountdownCommand, "start")
+				.child(stopGameCommand, "stop")
 				.child(copySelectionCommand, "copy", "cp")
-				.child(makeSpawnCommand, "make-spawn", "makespawn", "mks")
+				.child(makeSpawnCommand, "make-spawn", "make-spawn", "mks")
 				.child(roleCommands, "role")
 				.child(scoreCommand, "score")
 				.build();
