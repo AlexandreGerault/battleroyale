@@ -18,7 +18,6 @@ import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 
 import com.flowpowered.math.vector.Vector3i;
-// Imports for logger
 import com.google.inject.Inject;
 
 import io.github.alexandregerault.battleroyale.registers.CommandsRegister;
@@ -32,11 +31,13 @@ import org.slf4j.Logger;
 
 @Plugin(id = "brp", name = "Battle Royale", version = "1.0", description = "Battle royal plugin")
 public class BattleRoyale {
-	
+
 	@Inject
 	private Game game;
-	/*@Inject
-	private AssetManager assets;*/
+	/*
+	@Inject
+	private AssetManager assets;
+	*/
 	@Inject
 	private PluginContainer container;
 	@Inject
@@ -44,22 +45,22 @@ public class BattleRoyale {
     @Inject
     @ConfigDir(sharedRoot = false)
     private File configDir;
-    
+
     private File schematicsDir;
     private Vector3i spawn;
     private GameState state;
-    
+
     @Listener
 	public void GameRegistryEventRegisterKey(GameRegistryEvent.Register<Key<?>> event) {
 	    event.register(ClipboardKeys.CLIPBOARD);
 	    event.register(ClipboardKeys.CORNER_ONE);
 	    event.register(ClipboardKeys.CORNER_TWO);
-	    
+
 	    event.register(PlayerKeys.ROLE);
-	    
+
 	    event.register(FighterKeys.KILLS);
 	}
-	
+
     @Listener
     public void onPreInit(GamePreInitializationEvent event) {
     	DataRegistration.builder()
@@ -69,7 +70,7 @@ public class BattleRoyale {
     	.manipulatorId("clipboard")
     	.dataName("Clipboard Data")
     	.buildAndRegister(container);
-    	
+
     	DataRegistration.builder()
     	.dataClass(PlayerData.class)
     	.immutableClass(PlayerData.Immutable.class)
@@ -77,7 +78,7 @@ public class BattleRoyale {
     	.manipulatorId("player")
     	.dataName("Player Data")
     	.buildAndRegister(container);
-    	
+
     	DataRegistration.builder()
     	.dataClass(FighterData.class)
     	.immutableClass(FighterData.Immutable.class)
@@ -86,43 +87,47 @@ public class BattleRoyale {
     	.dataName("Fighter Data")
     	.buildAndRegister(container);
     }
-    
+
 	@Listener
 	public void onInit(GameInitializationEvent event){
 		CommandsRegister.register(this);
 		EventsRegister.register(this);
-		
+
 		this.schematicsDir = new File(this.configDir, "structures");
         if(this.schematicsDir.mkdirs())
         	this.state = GameState.LOBBY;
         else
-        	throw new RuntimeException();
+        	this.logger().info("Config dir already exists");
 	}
-	
+
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
         logger.info("Successfully running BRP!");
     }
-    
+
     @Listener
     public void onServerStop(GameStoppingServerEvent event) {
     }
-    
+
     public Game game() {
     	return this.game;
     }
 
-    /*public Optional<Asset> getAsset(String assetName) {
+    /*
+    public Optional<Asset> getAsset(String assetName) {
     	return this.assets.getAsset(assetName);
-    }*/
-    
+    }
+    */
+
     public PluginContainer plugin() {
     	return this.container;
     }
-    
-    /*public File configDir() {
+
+    /*
+    public File configDir() {
     	return this.configDir;
-    }*/
+    }
+    */
     
     public File schematicDir() {
     	return this.schematicsDir;

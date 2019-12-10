@@ -25,17 +25,6 @@ public class ClipboardHelper {
         Vector3i positionOne = optPositionOne.get();
         Vector3i positionTwo = optPositionTwo.get();
 
-        if (positionOne.getX() == positionTwo.getX()) {
-            positionTwo = positionTwo.add(1,0,0);
-        }
-        if (positionOne.getY() == positionTwo.getY()) {
-            positionTwo = positionTwo.add(0,1,0);
-        }
-        if (positionOne.getZ() == positionTwo.getZ()) {
-            positionTwo = positionTwo.add(0,0,1);
-        }
-
-
         Vector3i origin = new Vector3i(
                 ( positionOne.getX() + positionTwo.getX() )/2,
                 positionOne.min(positionTwo).getY(),

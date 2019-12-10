@@ -20,33 +20,34 @@ public class ClipboardEvents {
 
 	public ClipboardEvents() {}
 	
-	@Listener
+    @Listener
     public void onInteract(InteractBlockEvent.Primary.MainHand event, @Root Player player) {
         Optional<ItemStack> item = player.getItemInHand(HandTypes.MAIN_HAND);
 
         if (item.isPresent() && item.get().getType().equals(ItemTypes.GOLDEN_HOE) && event.getTargetBlock() != BlockSnapshot.NONE) {
-        	player.offer(ClipboardKeys.CORNER_ONE, Optional.of(event.getTargetBlock().getPosition()));
+            player.offer(ClipboardKeys.CORNER_ONE, Optional.of(event.getTargetBlock().getPosition()));
+            event.setCancelled(true);
 
-        	if (! player.get(ClipboardKeys.CORNER_ONE).isPresent() || !player.get(ClipboardKeys.CORNER_ONE).get().isPresent()) {
-        	    player.sendMessage(Text.of(TextColors.RED, "An error has occurred!"));
-        	    return;
+            if (! player.get(ClipboardKeys.CORNER_ONE).isPresent() || !player.get(ClipboardKeys.CORNER_ONE).get().isPresent()) {
+                player.sendMessage(Text.of(TextColors.RED, "An error has occurred!"));
+                return;
             }
 
             player.sendMessage(Text.of(TextColors.GREEN, "Position 1 set to " + player.get(ClipboardKeys.CORNER_ONE).get().get()));
 
             ClipboardHelper.updateClipboard(player);
 
-            event.setCancelled(true);
         }
     }
-	
-	@Listener
+
+    @Listener
     public void onInteract(InteractBlockEvent.Secondary.MainHand event, @Root Player player) {
         Optional<ItemStack> item = player.getItemInHand(HandTypes.MAIN_HAND);
         if (item.isPresent() && item.get().getType().equals(ItemTypes.GOLDEN_HOE) && event.getTargetBlock() != BlockSnapshot.NONE) {
-        	player.offer(ClipboardKeys.CORNER_TWO, Optional.of(event.getTargetBlock().getPosition()));
+            player.offer(ClipboardKeys.CORNER_TWO, Optional.of(event.getTargetBlock().getPosition()));
+            event.setCancelled(true);
 
-        	if (!player.get(ClipboardKeys.CORNER_TWO).isPresent() || !player.get(ClipboardKeys.CORNER_TWO).get().isPresent()) {
+            if (!player.get(ClipboardKeys.CORNER_TWO).isPresent() || !player.get(ClipboardKeys.CORNER_TWO).get().isPresent()) {
                 player.sendMessage(Text.of(TextColors.RED, "An error has occurred!"));
                 return;
             }
@@ -54,8 +55,6 @@ public class ClipboardEvents {
             player.sendMessage(Text.of(TextColors.GREEN, "Position 2 set to " + player.get(ClipboardKeys.CORNER_TWO).get().get()));
 
             ClipboardHelper.updateClipboard(player);
-
-            event.setCancelled(true);
         }
     }
 }
