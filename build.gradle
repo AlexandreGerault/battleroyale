@@ -1,19 +1,30 @@
 plugins {
-    id 'java-library'
-    id 'org.spongepowered.plugin' version '0.9.0'
+    id 'java'
 }
 
-group = 'io.github.AlexandreGerault.BattleRoyal' // TODO
-version = '1.0-SNAPSHOT'
-description = 'A battle royal plugin'
+group = 'io.github.AlexandreGerault'
+version = '1.0.0-SNAPSHOT'
+description = 'A battle royale plugin'
 
 dependencies {
-    api 'org.apache.commons:commons-math3:3.6.1'
-    implementation 'com.google.guava:guava:23.0'
-    testImplementation 'junit:junit:4.12'
     compile 'org.spongepowered:spongeapi:7.1.0'
 }
 
 repositories {
     jcenter()
+    maven {
+        name = 'sponge-repo'
+        url = 'https://repo.spongepowered.org/maven'
+    }
+}
+
+task copyLibs(type: Copy) {
+    from 'build/libs'
+    into '../SpongeServer/mods'
+}
+
+task jarAndCopy() {
+    dependsOn jar
+    dependsOn copyLibs
+    tasks.findByName('copyLibs').mustRunAfter 'jar'
 }

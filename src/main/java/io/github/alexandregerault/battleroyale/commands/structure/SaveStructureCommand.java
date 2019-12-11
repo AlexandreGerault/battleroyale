@@ -1,5 +1,7 @@
 package io.github.alexandregerault.battleroyale.commands.structure;
 
+import java.util.Optional;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -12,8 +14,8 @@ import org.spongepowered.api.world.extent.ArchetypeVolume;
 
 import com.flowpowered.math.vector.Vector3i;
 
+import io.github.alexandregerault.battleroyale.data.ClipboardKeys;
 import io.github.alexandregerault.battleroyale.main.BattleRoyale;
-import io.github.alexandregerault.battleroyale.main.PlayerData;
 import io.github.alexandregerault.battleroyale.utils.SchematicFile;
 
 public class SaveStructureCommand implements CommandExecutor {
@@ -33,19 +35,13 @@ public class SaveStructureCommand implements CommandExecutor {
 		}
 		
 		Player player = (Player) source;
-		PlayerData playerData = plugin.getPlayerData(player);
-		String name = args.<String>getOne("structure name").get();
-		
-		if (playerData.getPos1() == null || playerData.getPos2() == null) {
-			player.sendMessage(Text.of(TextColors.RED, "Error, you must have selected two corners with golden hoe"));
-			return CommandResult.success();
-		}
-		
-		Vector3i min = playerData.getPos1().min(playerData.getPos2());
-        Vector3i max = playerData.getPos1().max(playerData.getPos2());
-        Vector3i origin = new Vector3i((min.getX() + max.getX())/2, min(min.getY(), max.getY()), (min.getZ() + max.getZ())/2);
+		String name = args.requireOne("structure name");
 
-        ArchetypeVolume volume = player.getWorld().createArchetypeVolume(min, max, origin);
+		if (!player.get(ClipboardKeys.CLIPBOARD).isPresent()) {
+			throw new CommandException(Text.of("Error, you must have selected two corners with golden hoe"));
+		}
+
+        ArchetypeVolume volume = player.get(ClipboardKeys.CLIPBOARD).get().get();
         
     	if(SchematicFile.save(volume, player.getName(), name, plugin.schematicDir().getPath() + "/" + name + ".schematic")) {
         	player.sendMessage(Text.of(TextColors.GREEN, "Saved structure to " + plugin.schematicDir().getPath() + "/" + name + ".schematic"));
@@ -54,11 +50,6 @@ public class SaveStructureCommand implements CommandExecutor {
         }
 
 		return CommandResult.success();
-	}
-
-	private int min(int a, int b) {
-		if (a < b) return a;
-		else return b;
 	}
 
 }

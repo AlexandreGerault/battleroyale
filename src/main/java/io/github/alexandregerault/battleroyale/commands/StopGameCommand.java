@@ -1,6 +1,6 @@
 package io.github.alexandregerault.battleroyale.commands;
 
-import org.spongepowered.api.command.CommandException;
+import io.github.alexandregerault.battleroyale.main.GameState;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -9,7 +9,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import io.github.alexandregerault.battleroyale.main.BattleRoyale;
-import io.github.alexandregerault.battleroyale.main.GameStates;
 
 public class StopGameCommand implements CommandExecutor {
 
@@ -20,8 +19,8 @@ public class StopGameCommand implements CommandExecutor {
 	}
 	
 	@Override
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		plugin.setState(GameStates.LOBBY);
+	public CommandResult execute(CommandSource src, CommandContext args) {
+		plugin.setState(GameState.LOBBY);
 		plugin.game().getServer().getBroadcastChannel().send(Text.of(TextColors.GREEN, "The game has been stopped"));
 		return CommandResult.success();
 	}

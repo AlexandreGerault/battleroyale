@@ -1,14 +1,19 @@
 package io.github.alexandregerault.battleroyale.main;
 
-public class GameState {
+public enum GameState {
+
+	LOBBY("lobby"),
+	COUNTDOWN("countdown"),
+	BATTLE("battle"),
+	END("end");
 
 	private String name;
 
-	public GameState(String name) {
+	GameState(String name) {
 		this.name = name;
 	}
-	
-	public String name() {
+
+	public String toString() {
 		return this.name;
 	}
 }

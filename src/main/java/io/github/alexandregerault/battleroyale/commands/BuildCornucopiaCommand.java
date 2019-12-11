@@ -34,7 +34,7 @@ public class BuildCornucopiaCommand implements CommandExecutor {
 			}
 			
 		} else {
-			plugin.plugin().getLogger().info("Only players can use this command at the moment");
+			throw new CommandException(Text.of("Only players can use this command (maybe will implement a version with Location parameter or random Location)"));
 		}
 		
 		return CommandResult.success();

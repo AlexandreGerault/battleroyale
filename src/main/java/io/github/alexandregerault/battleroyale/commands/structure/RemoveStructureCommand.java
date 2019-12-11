@@ -2,7 +2,6 @@ package io.github.alexandregerault.battleroyale.commands.structure;
 
 import java.io.File;
 
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -22,15 +21,15 @@ public class RemoveStructureCommand implements CommandExecutor {
 	}
 
 	@Override
-	public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-		String schematicName = args.<String>getOne("structure name").get();
+	public CommandResult execute(CommandSource src, CommandContext args) {
+		String schematicName = args.requireOne("structure name");
 		
 		if(SchematicFile.exists(schematicName, plugin)) {
 			File file = SchematicFile.get(schematicName, plugin);
 			if(file.delete()) {
 				src.sendMessage(Text.of(TextColors.GREEN, "The structure file (" + schematicName + ".schematic) has been deleted."));
 			} else {
-				src.sendMessage(Text.of(TextColors.RED, "An error has occured while deleting the file... Please check logs."));
+				src.sendMessage(Text.of(TextColors.RED, "An error has occurred while deleting the file... Please check logs."));
 			}
 		} else {
 			src.sendMessage(Text.of(TextColors.RED, "It seems the structure file doesn't exist."));
