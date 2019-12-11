@@ -36,7 +36,6 @@ public class ClipboardEvents {
             player.sendMessage(Text.of(TextColors.GREEN, "Position 1 set to " + player.get(ClipboardKeys.CORNER_ONE).get().get()));
 
             ClipboardHelper.updateClipboard(player);
-
         }
     }
 

@@ -41,6 +41,6 @@ public class Builder {
         
         Schematic schematic = DataTranslators.SCHEMATIC.translate(schematicData);
         
-        schematic.apply(loc_.add(0, schematic.getBlockSize().getY() - 1, 0), BlockChangeFlags.ALL);
+        schematic.apply(loc_, BlockChangeFlags.ALL);
 	}
 }

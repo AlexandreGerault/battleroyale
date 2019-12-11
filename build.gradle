@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+}
+
+group = 'io.github.AlexandreGerault'
+version = '1.0.0-SNAPSHOT'
+description = 'A battle royale plugin'
+
+dependencies {
+    compile 'org.spongepowered:spongeapi:7.1.0'
+}
+
+repositories {
+    jcenter()
+    maven {
+        name = 'sponge-repo'
+        url = 'https://repo.spongepowered.org/maven'
+    }
+}
+
+task copyLibs(type: Copy) {
+    from 'build/libs'
+    into '../SpongeServer/mods'
+}
+
+task jarAndCopy() {
+    dependsOn jar
+    dependsOn copyLibs
+    tasks.findByName('copyLibs').mustRunAfter 'jar'
+}
