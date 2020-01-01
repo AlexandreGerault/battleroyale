@@ -22,34 +22,22 @@ public class ClipboardHelper {
         if (!optPositionOne.isPresent() || !optPositionTwo.isPresent())
             return;
 
-        Vector3i positionOne = optPositionOne.get();
-        Vector3i positionTwo = optPositionTwo.get();
+        Vector3i min = optPositionOne.get().min(optPositionTwo.get());
+        Vector3i max = optPositionOne.get().max(optPositionTwo.get());
 
-        if (positionOne.getX() == positionTwo.getX()) {
-            positionTwo = positionTwo.add(1,0,0);
-        }
-        if (positionOne.getY() == positionTwo.getY()) {
-            positionTwo = positionTwo.add(0,1,0);
-        }
-        if (positionOne.getZ() == positionTwo.getZ()) {
-            positionTwo = positionTwo.add(0,0,1);
-        }
-
-
-        Vector3i origin = new Vector3i(
-                ( positionOne.getX() + positionTwo.getX() )/2,
-                positionOne.min(positionTwo).getY(),
-                ( positionOne.getZ() + positionTwo.getZ() )/2
-        );
+        if (max.getX() == min.getX()) max = max.add(1,0,0);
+        if (max.getY() == min.getY()) max = max.add(0,1,0);
+        if (max.getZ() == min.getZ()) max = max.add(0,0,1);
 
         Schematic schematic = Schematic.builder()
-                .volume(player.getWorld().createArchetypeVolume(positionOne.min(positionTwo), positionOne.max(positionTwo), origin))
+                .volume(player.getWorld().createArchetypeVolume(min, max, min))
                 .metaValue(Schematic.METADATA_AUTHOR, player.getName())
                 .paletteType(BlockPaletteTypes.LOCAL)
                 .build();
 
+        player.sendMessage(Text.of(TextColors.GREEN, "Clipboard updated!"));
+
         player.offer(ClipboardKeys.CLIPBOARD, Optional.of(schematic));
-        player.sendMessage(Text.of(TextColors.GREEN, "Copying from " + positionOne.toString() + " to " + positionTwo.toString() +"! Clipboard updated."));
     }
 
 }

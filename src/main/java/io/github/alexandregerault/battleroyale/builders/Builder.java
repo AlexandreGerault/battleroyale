@@ -41,18 +41,6 @@ public class Builder {
         
         Schematic schematic = DataTranslators.SCHEMATIC.translate(schematicData);
         
-        loc_ = loc_.asHighestLocation();
-        
-        while(	loc_.getBlock().getType().equals(BlockTypes.AIR) ||
-        		loc_.getBlock().getType().equals(BlockTypes.LEAVES) ||
-        		loc_.getBlock().getType().equals(BlockTypes.LEAVES2)) {
-        	
-        	loc_ = loc_.add(0, -1, 0);
-        	
-			//for non infinite loop
-			if (loc_.getY() <= 0) break;
-		}
-        
-        schematic.apply(loc_.add(0, schematic.getBlockSize().getY() - 1, 0), BlockChangeFlags.ALL);
+        schematic.apply(loc_, BlockChangeFlags.ALL);
 	}
 }
