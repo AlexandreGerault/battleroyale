@@ -93,10 +93,14 @@ public class BattleRoyale {
 		EventsRegister.register(this);
 		
 		this.schematicsDir = new File(this.configDir, "structures");
-        if(this.schematicsDir.mkdirs())
-        	this.state = GameState.LOBBY;
-        else
-        	throw new RuntimeException();
+		this.state = GameState.LOBBY;
+
+        if(this.schematicsDir.mkdirs()) {
+			plugin().getLogger().info("Make " + this.schematicsDir.getPath() + "dir");
+		}
+        else{
+        	plugin().getLogger().info(this.schematicsDir.getPath() + " already exists");
+        }
 	}
 	
     @Listener
