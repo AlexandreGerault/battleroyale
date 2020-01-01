@@ -14,10 +14,6 @@ import org.spongepowered.api.world.schematic.Schematic;
 import io.github.alexandregerault.battleroyale.main.BattleRoyale;
 
 public class SchematicFile {
-
-	public static void load(String filename_) {
-		
-	}
 	
 	public static boolean save(ArchetypeVolume volume_, String author_, String name_, String location_) {
 		Schematic schematic = Schematic.builder()
