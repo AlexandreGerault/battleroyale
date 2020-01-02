@@ -1,0 +1,11 @@
+[{
+    "modid": "brp",
+    "name": "Battle Royale",
+    "version": "1.0",
+    "description": "Battle royale plugin",
+    "authorList": [
+        "Alexandre Gérault",
+    ],
+    "dependencies": [
+    ]
+}]
