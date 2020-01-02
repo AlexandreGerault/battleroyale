@@ -94,10 +94,9 @@ public class BattleRoyale {
 		EventsRegister.register(this);
 
 		this.schematicsDir = new File(this.configDir, "structures");
-        if(this.schematicsDir.mkdirs())
-        	this.state = GameState.LOBBY;
-        else
-        	this.logger().info("Config dir already exists");
+		this.state = GameState.LOBBY;
+
+		if(! this.schematicsDir.mkdirs())  this.logger().info("Config dir already exists");
 	}
 
     @Listener
