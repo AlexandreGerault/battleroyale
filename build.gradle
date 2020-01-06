@@ -27,7 +27,7 @@ repositories {
 
 task copyLibs(type: Copy) {
     from 'build/libs'
-    into '/home/alexandre/Minecraft/SpongeServer/mods'
+    into 'server/mods'
 }
 
 task jarAndCopy() {
